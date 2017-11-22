@@ -25,13 +25,15 @@ app.use("/", express.static('public'));
         		console.log("Url is valid");
 				var urlList = db.collection('url-list');
                 var shortUrl = shortId.generate();
-                urlList.insert({longUrl: url, shortUrl: shortUrl}, function(){
+                urlList.insert({longUrl: url, shortUrl: shortUrl}, function(err){
+                  if (err) res.end("Error: " + err);
                     var data = {
                         long_url: url,
                         short_url: 'http://'+req.headers['host']+'/'+shortUrl
                     }
-                    db.close();
                     res.send(data);
+                    db.close();
+                    
                 });
     		}
 		
@@ -50,19 +52,20 @@ app.use("/", express.static('public'));
  	        var urlList = db.collection('url-list');
           	urlList.find({shortUrl:id}).toArray(function(err,docs){
               if(err){
-                  res.end(err);
+                  res.end("Error: " + err);
                   
               } 
               else {
 
                     if(docs.length>0){
-                        db.close();
+                        
                         res.redirect(docs[0].longUrl);
                     } else {
-                        db.close();
+                        
                         res.end('Not Found!')
                     }
               }
+              db.close();
           })
       
   })
