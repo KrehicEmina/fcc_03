@@ -25,14 +25,14 @@ app.use("/", express.static('public'));
         		console.log("Url is valid");
 				var urlList = db.collection('url-list');
                 var shortUrl = shortId.generate();
-                urlList.insert({longUrl: url, shortUrl: shortUrl}, function(err){
-                  if (err) res.end("Error: " + err);
+                urlList.insert({longUrl: url, shortUrl: shortUrl}, function(){
+                  
                     var data = {
                         long_url: url,
                         short_url: 'http://'+req.headers['host']+'/'+shortUrl
                     }
                     res.send(data);
-                    db.close();
+            
                     
                 });
     		}
@@ -57,6 +57,8 @@ app.use("/", express.static('public'));
               } 
               else {
 
+                console.log(docs.length);
+
                     if(docs.length>0){
                         
                         res.redirect(docs[0].longUrl);
@@ -65,11 +67,11 @@ app.use("/", express.static('public'));
                         res.end('Not Found!')
                     }
               }
-              db.close();
+        
+              
           })
-      
   })
 }});
 
 
-app.listen(port)
+app.listen(port);
